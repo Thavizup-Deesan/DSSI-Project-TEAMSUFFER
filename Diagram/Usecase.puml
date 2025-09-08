@@ -1,0 +1,76 @@
+@startuml
+' ตั้งค่า theme ของแผนภาพ
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor #LightGreen
+    BorderColor #DarkGreen
+}
+left to right direction
+
+' กำหนด Actor
+actor "ผู้ใช้ทั่วไป" as User
+actor "ลูกทีม" as Member
+actor "หัวหน้าทีม" as TeamLead
+actor "Admin" as Admin
+actor "ผู้เข้าใช้งานระบบ" as SiteUser
+
+rectangle "ระบบจัดการแข่งขัน E-Sport" {
+    ' Use Cases - General
+    usecase UC01 as "1.ดูข้อมูลทัวร์นาเมนต์"
+    usecase UC16 as "16.ลืมรหัสผ่าน"
+    usecase UC02 as "2.ดูข้อมูลทีม/ผู้เล่น"
+    usecase UC03 as "3.ดูสายการแข่งขันและผลการแข่งขัน"
+    usecase UC04 as "4.สมัครสมาชิก"
+    usecase UC05 as "5.เข้าสู่ระบบ"
+
+    ' Use Cases - Team Management
+    usecase UC06 as "6.สร้างทีม"
+    usecase UC07 as "7.จัดการลูกทีม"
+    usecase UC08 as "8.สมัครเข้าร่วมทัวร์นาเมนต์"
+    usecase UC17 as "17.จัดการทีม"
+
+    usecase UC18 as "18.ยืนยันเข้าร่วมทีม"
+    ' use case for admin
+    usecase UC10 as "10.สร้างทัวร์นาเมนต์"
+    usecase UC09 as "9.บันทึกผลการแข่งขัน"
+    usecase UC11 as "11.จัดการทัวร์นาเมนต์"
+    usecase UC12 as "12.จัดการทีมที่สมัคร"
+    usecase UC13 as "13.จัดสายการแข่งขัน"
+    usecase UC14 as "14.ยืนยันผลการแข่งขัน"
+
+    usecase UC15 as "15.แก้ไขข้อมูลส่วนตัว"
+}
+
+User -- UC01
+User -- UC16
+User -- UC02
+User -- UC03
+User -- UC04
+User -- UC05
+
+SiteUser -- UC01
+SiteUser -- UC02
+SiteUser -- UC03
+
+TeamLead -- UC06
+TeamLead -- UC07
+TeamLead -- UC08
+TeamLead -- UC17
+
+Member -- UC18
+SiteUser -- UC15
+
+Admin -- UC11
+Admin -- UC09
+Admin -- UC10
+Admin -- UC12
+Admin -- UC13
+Admin -- UC14
+
+
+
+TeamLead --|> SiteUser
+Admin --|> SiteUser
+Member --|> SiteUser
+
+@enduml
