@@ -1,4 +1,4 @@
-@startuml "UI State Transition Diagram (Separated Dashboards)"
+@startuml "UI State Transition Diagram (Complete Version)"
 left to right direction
 
 ' --- 1. State Definitions ---
@@ -9,6 +9,8 @@ state "หน้าลืมรหัสผ่าน\n(P_FORGOT_PASS)" as P_FORG
 state "หน้ารีเซ็ตรหัสผ่าน\n(P_RESET_PASS)" as P_RESET_PASS
 state "หน้ารายการทัวร์นาเมนต์\n(P_TOUR_LIST)" as P_TOUR_LIST
 state "หน้ารายละเอียดทัวร์นาเมนต์\n(P_TOUR_DETAIL)" as P_TOUR_DETAIL
+state "หน้ารายการทีม/ผู้เล่น\n(P_TEAM_LIST)" as P_TEAM_LIST
+state "หน้าโปรไฟล์ทีม\n(P_TEAM_DETAIL)" as P_TEAM_DETAIL
 
 state "แดชบอร์ดผู้ใช้ (ไม่มีทีม)\n(U_DASHBOARD)" as U_DASHBOARD
 state "แดชบอร์ดลูกทีม\n(M_DASHBOARD)" as M_DASHBOARD
@@ -47,6 +49,20 @@ P_LOGIN --> U_DASHBOARD : เข้าสู่ระบบ (ผู้ใช้�
 P_LOGIN --> M_DASHBOARD : เข้าสู่ระบบ (ลูกทีม)
 P_LOGIN --> TL_DASHBOARD : เข้าสู่ระบบ (หัวหน้าทีม)
 P_LOGIN --> A_DASHBOARD : เข้าสู่ระบบ (Admin)
+
+' --- General Browsing (Complete Flow) ---
+' Main Path for Tournaments
+P_HOME --> P_TOUR_LIST : คลิกเมนู 'ทัวร์นาเมนต์'
+P_TOUR_LIST --> P_TOUR_DETAIL : เลือกทัวร์นาเมนต์
+
+' Main Path for Teams
+P_HOME --> P_TEAM_LIST : คลิกเมนู 'ทีม/ผู้เล่น'
+P_TEAM_LIST --> P_TEAM_DETAIL : เลือกทีม
+
+' Shortcut Paths from Home
+P_HOME --> P_TOUR_DETAIL : คลิก 'ทัวร์นาเมนต์เด่น'
+P_HOME --> P_TEAM_DETAIL : คลิก 'ทีมเด่น'
+
 
 ' --- General User (No Team) Flow ---
 U_DASHBOARD --> U_PROFILE : ดูโปรไฟล์
