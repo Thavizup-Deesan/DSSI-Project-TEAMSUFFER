@@ -1,0 +1,89 @@
+@startuml "UI State Transition Diagram (Separated Dashboards)"
+left to right direction
+
+' --- 1. State Definitions ---
+state "หน้าแรก\n(P_HOME)" as P_HOME
+state "หน้าเข้าสู่ระบบ\n(P_LOGIN)" as P_LOGIN
+state "หน้าสมัครสมาชิก\n(P_REGISTER)" as P_REGISTER
+state "หน้าลืมรหัสผ่าน\n(P_FORGOT_PASS)" as P_FORGOT_PASS
+state "หน้ารีเซ็ตรหัสผ่าน\n(P_RESET_PASS)" as P_RESET_PASS
+state "หน้ารายการทัวร์นาเมนต์\n(P_TOUR_LIST)" as P_TOUR_LIST
+state "หน้ารายละเอียดทัวร์นาเมนต์\n(P_TOUR_DETAIL)" as P_TOUR_DETAIL
+
+state "แดชบอร์ดผู้ใช้ (ไม่มีทีม)\n(U_DASHBOARD)" as U_DASHBOARD
+state "แดชบอร์ดลูกทีม\n(M_DASHBOARD)" as M_DASHBOARD
+state "แดชบอร์ดหัวหน้าทีม\n(TL_DASHBOARD)" as TL_DASHBOARD
+state "แดชบอร์ด Admin\n(A_DASHBOARD)" as A_DASHBOARD
+
+state "หน้าโปรไฟล์ส่วนตัว\n(U_PROFILE)" as U_PROFILE
+state "หน้าแก้ไขโปรไฟล์\n(U_PROFILE_EDIT)" as U_PROFILE_EDIT
+state "หน้าการแจ้งเตือน/คำเชิญ\n(U_NOTIFICATIONS)" as U_NOTIFICATIONS
+
+state "หน้าสร้างทีม\n(TL_TEAM_CREATE)" as TL_TEAM_CREATE
+state "หน้าจัดการทีม\n(TL_TEAM_MANAGE)" as TL_TEAM_MANAGE
+
+state "หน้าจัดการทัวร์นาเมนต์ (Admin)\n(A_TOUR_MANAGE)" as A_TOUR_MANAGE
+state "หน้าสร้าง/แก้ไขทัวร์นาเมนต์\n(A_TOUR_CREATE_EDIT)" as A_TOUR_CREATE_EDIT
+state "หน้าอนุมัติทีม\n(A_TEAM_APPROVAL)" as A_TEAM_APPROVAL
+state "หน้าจัดสายการแข่ง\n(A_BRACKET_GEN)" as A_BRACKET_GEN
+state "หน้าบันทึกผลแข่ง\n(A_MATCH_RESULT)" as A_MATCH_RESULT
+
+
+' --- 2. Initial State ---
+[*] --> P_HOME
+
+' --- 3. Transitions ---
+
+' --- Public & Authentication Flow ---
+P_HOME --> P_LOGIN : คลิก 'เข้าสู่ระบบ'
+P_HOME --> P_REGISTER : คลิก 'สมัครสมาชิก'
+P_LOGIN --> P_FORGOT_PASS : คลิก 'ลืมรหัสผ่าน'
+P_REGISTER --> P_LOGIN : สมัครสำเร็จ
+note right of P_FORGOT_PASS : ผู้ใช้คลิกลิงก์ในอีเมล
+P_RESET_PASS --> P_LOGIN : ตั้งรหัสผ่านใหม่สำเร็จ
+
+' --- Login Flow (แยกตาม Role) ---
+P_LOGIN --> U_DASHBOARD : เข้าสู่ระบบ (ผู้ใช้ไม่มีทีม)
+P_LOGIN --> M_DASHBOARD : เข้าสู่ระบบ (ลูกทีม)
+P_LOGIN --> TL_DASHBOARD : เข้าสู่ระบบ (หัวหน้าทีม)
+P_LOGIN --> A_DASHBOARD : เข้าสู่ระบบ (Admin)
+
+' --- General User (No Team) Flow ---
+U_DASHBOARD --> U_PROFILE : ดูโปรไฟล์
+U_DASHBOARD --> TL_TEAM_CREATE : คลิก 'สร้างทีม'
+U_DASHBOARD --> P_HOME : ออกจากระบบ
+
+' --- Team Member Flow ---
+M_DASHBOARD --> U_PROFILE : ดูโปรไฟล์
+M_DASHBOARD --> U_NOTIFICATIONS : ดูการแจ้งเตือน
+M_DASHBOARD --> P_HOME : ออกจากระบบ
+
+' --- Team Lead Flow ---
+TL_DASHBOARD --> U_PROFILE : ดูโปรไฟล์
+TL_DASHBOARD --> TL_TEAM_MANAGE : คลิก 'จัดการทีม'
+TL_DASHBOARD --> P_TOUR_LIST : ค้นหาทัวร์นาเมนต์
+TL_DASHBOARD --> P_HOME : ออกจากระบบ
+
+' --- Admin Flow ---
+A_DASHBOARD --> A_TOUR_MANAGE : คลิก 'จัดการทัวร์นาเมนต์'
+A_DASHBOARD --> P_HOME : ออกจากระบบ
+
+' --- Detailed Admin Management Flow ---
+A_TOUR_MANAGE --> A_TOUR_CREATE_EDIT : สร้าง/แก้ไขทัวร์นาเมนต์
+A_TOUR_MANAGE --> A_TEAM_APPROVAL : จัดการทีมที่สมัคร
+A_TOUR_MANAGE --> A_BRACKET_GEN : จัดสายการแข่งขัน
+A_TOUR_MANAGE --> A_MATCH_RESULT : บันทึก/ยืนยันผล
+A_TOUR_CREATE_EDIT --> A_TOUR_MANAGE : บันทึก
+A_TEAM_APPROVAL --> A_TOUR_MANAGE : กลับ
+A_BRACKET_GEN --> A_TOUR_MANAGE : เผยแพร่
+A_MATCH_RESULT --> A_TOUR_MANAGE : บันทึก/ยืนยัน
+
+' --- Shared Transitions & Actions ---
+U_PROFILE --> U_PROFILE_EDIT : แก้ไขข้อมูล
+U_PROFILE_EDIT --> U_PROFILE : บันทึก
+U_NOTIFICATIONS --> M_DASHBOARD : [Action] ตอบรับคำเชิญ
+TL_TEAM_CREATE --> TL_DASHBOARD : [Action] สร้างทีมสำเร็จ
+TL_TEAM_MANAGE --> P_TOUR_DETAIL : [Action] ดูทัวร์นาเมนต์ที่จะสมัคร
+P_TOUR_DETAIL --> TL_DASHBOARD : [Action] สมัครทัวร์นาเมนต์สำเร็จ
+
+@enduml

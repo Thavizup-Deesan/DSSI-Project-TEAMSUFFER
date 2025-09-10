@@ -1,4 +1,4 @@
-@startuml
+@startuml "Use Case Diagram (Revised)"
 ' ตั้งค่า theme ของแผนภาพ
 skinparam actorStyle awesome
 skinparam usecase {
@@ -41,6 +41,7 @@ rectangle "ระบบจัดการแข่งขัน E-Sport" {
     usecase UC15 as "15.แก้ไขข้อมูลส่วนตัว"
 }
 
+' --- General User Flow ---
 User -- UC01
 User -- UC16
 User -- UC02
@@ -48,18 +49,25 @@ User -- UC03
 User -- UC04
 User -- UC05
 
+' --- SiteUser (Logged-in User) Flow ---
 SiteUser -- UC01
 SiteUser -- UC02
 SiteUser -- UC03
+SiteUser -- UC15
+' *** จุดแก้ไขที่สำคัญ ***
+' SiteUser คือผู้ที่สามารถ "สร้างทีม" เพื่อที่จะกลายเป็น TeamLead
+SiteUser -- UC06
 
-TeamLead -- UC06
+' --- TeamLead Flow ---
+' หลังจากเป็น TeamLead แล้ว จึงจะสามารถจัดการทีมได้
 TeamLead -- UC07
 TeamLead -- UC08
 TeamLead -- UC17
 
+' --- Member Flow ---
 Member -- UC18
-SiteUser -- UC15
 
+' --- Admin Flow ---
 Admin -- UC11
 Admin -- UC09
 Admin -- UC10
@@ -67,8 +75,7 @@ Admin -- UC12
 Admin -- UC13
 Admin -- UC14
 
-
-
+' --- Generalization (Inheritance) ---
 TeamLead --|> SiteUser
 Admin --|> SiteUser
 Member --|> SiteUser
